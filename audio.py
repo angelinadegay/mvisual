@@ -8,7 +8,7 @@ import pickle
 class AudioProcessor:
     def __init__(self):
         self.stream = None
-        self.model = load_model('audio_model.h5')
+        self.model = load_model('audio_modell.h5')
         with open('scaler.pkl', 'rb') as f:
             self.scaler = pickle.load(f)
         self.buffer_size = 2048
@@ -63,6 +63,9 @@ class AudioProcessor:
                 return None
             scaled_mfccs = self.scaler.transform(mfccs.T)
             predictions = self.model.predict(scaled_mfccs)
+            threshold = 0.1
+            if np.mean(predictions) < threshold:
+                return None
             print("Predictions:", predictions)  # Debugging print statement
             return predictions
-        return None
+       

@@ -2,6 +2,7 @@ import pygame
 from audio import AudioProcessor
 from visual import Visualizer
 import config
+import numpy as np
 
 def main():
     pygame.init()
@@ -18,12 +19,13 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
+        # Inside the main loop
         predictions = audio_processor.predict()
-        if predictions is not None:
-            print(f"Predictions Mean: {predictions.mean(axis=0)}")  # Debugging print statement
+        if predictions is not None and not np.allclose(predictions.mean(axis=0), 0, atol=1e-3):
             visualizer.draw_visuals(predictions.mean(axis=0))
         else:
-            print("No predictions received")
+            visualizer.clear_visuals()  # No predictions or silence detected, clear the visuals
+
         pygame.display.flip()
         clock.tick(10)  # Limit the frame rate to 10 frames per second
 
